@@ -25,7 +25,7 @@ let completedOrders = [];
 
 // ===== ADD BOT FUNCTION =====
 function addBot() {
-    const bot = { id: bots.length + 1, currentOrder: null };
+    const bot = { id: bots.length + 1, currentOrder: null, isIdleLogged: false };
     bots.push(bot);
     log(`Bot #${bot.id} created - Status: ACTIVE`);
     processOrders(); // immediately try to pick up orders
@@ -37,7 +37,7 @@ function addOrder(type) {
     const order = { id: orderCounter, type, status: 'PENDING' };
     allOrders.push(order);
 
-    // VIP orders go in front of normal orders
+    // VIP orders go in front of normal orders but behind other VIPs
     if (type === OrderType.VIP) {
         const firstNormalIndex = pendingOrders.findIndex(o => o.type !== OrderType.VIP);
         if (firstNormalIndex === -1) {
@@ -50,44 +50,58 @@ function addOrder(type) {
     }
 
     log(`Created ${type} Order #${order.id} - Status: PENDING`);
-    processOrders();
+    processOrders(); // try to assign immediately
 }
 
 // ===== PROCESS ORDERS FUNCTION =====
 function processOrders() {
     bots.forEach(bot => {
-        // only assign if bot is idle
-        if (!bot.currentOrder && pendingOrders.length > 0) {
-            const order = pendingOrders.shift();
-            bot.currentOrder = order;
-            order.status = 'PROCESSING';
-            order.bot = bot.id;
+        if (!bot.currentOrder) {
+            if (pendingOrders.length > 0) {
+                // assign next order
+                const order = pendingOrders.shift();
+                bot.currentOrder = order;
+                order.status = 'PROCESSING';
+                order.bot = bot.id;
 
-            log(`Bot #${bot.id} picked up ${order.type} Order #${order.id} - Status: PROCESSING`);
+                // reset idle log
+                bot.isIdleLogged = false;
 
-            bot.timeout = setTimeout(() => {
-                order.status = 'COMPLETE';
-                order.completed = true;
-                completedOrders.push(order);
-                bot.currentOrder = null;
-                order.bot = null;
+                log(`Bot #${bot.id} picked up ${order.type} Order #${order.id} - Status: PROCESSING`);
 
-                log(`Bot #${bot.id} completed ${order.type} Order #${order.id} - Status: COMPLETE (Processing time: 10s)`);
+                bot.timeout = setTimeout(() => {
+                    order.status = 'COMPLETE';
+                    order.completed = true;
+                    completedOrders.push(order);
+                    bot.currentOrder = null;
+                    order.bot = null;
 
-                processOrders(); // pick next order if any
-            }, 10000); // 10 seconds per order
+                    log(`Bot #${bot.id} completed ${order.type} Order #${order.id} - Status: COMPLETE (Processing time: 10s)`);
+
+                    processOrders(); // pick next order if any
+                }, 10000);
+            } else {
+                // no pending orders → log idle once
+                if (!bot.isIdleLogged) {
+                    log(`Bot #${bot.id} is now IDLE - No pending orders`);
+                    bot.isIdleLogged = true;
+                }
+            }
         }
     });
 }
 
 // ===== SIMULATION =====
 log("McDonald's Order Management System - Simulation Results", false);
-log("", false)
+log("", false);
+
 // Example simulation actions
+addOrder(OrderType.NORMAL); // Order #1001
+addOrder(OrderType.VIP);    // Order #1002
+setTimeout(() => addOrder(OrderType.NORMAL), 2000); 
+
 addBot(); // Bot #1
 addBot(); // Bot #2
 
-addOrder(OrderType.NORMAL); // Order #1001
-addOrder(OrderType.VIP);    // Order #1002
-setTimeout(() => addOrder(OrderType.NORMAL), 2000); // Order #1003
+// Order #1003
 setTimeout(() => addOrder(OrderType.VIP), 5000);    // Order #1004
