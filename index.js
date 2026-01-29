@@ -79,12 +79,14 @@ function processOrders() {
                     log(`Bot #${bot.id} completed ${order.type} Order #${order.id} - Status: COMPLETE (Processing time: 10s)`);
 
                     processOrders(); // pick next order if any
+                    checkFinalStatus();
                 }, 10000);
             } else {
                 // no pending orders → log idle once
                 if (!bot.isIdleLogged) {
                     log(`Bot #${bot.id} is now IDLE - No pending orders`);
                     bot.isIdleLogged = true;
+                    checkFinalStatus();
                 }
             }
         }
@@ -131,16 +133,27 @@ function reportFinalStatus() {
     log(`- Pending Orders: ${pending}`, false);
 }
 
+// ===== CHECK IF FINAL STATUS SHOULD BE REPORTED =====
+let finalStatusReported = false;
+
+function checkFinalStatus() {
+    const allOrdersDone = allOrders.length === completedOrders.length;
+    const allBotsIdle = bots.every(bot => !bot.currentOrder);
+
+    if (!finalStatusReported && allOrdersDone && allBotsIdle) {
+        finalStatusReported = true; // mark it reported
+        reportFinalStatus();
+    }
+}
 
 // ===== SIMULATION =====
 log("McDonald's Order Management System - Simulation Results", false);
 log("", false);
 
-setTimeout(() => reportFinalStatus(), 55000);
 // Example simulation actions
 addOrder(OrderType.NORMAL); // Order #1001
 addOrder(OrderType.VIP);    // Order #1002
-setTimeout(() => addOrder(OrderType.NORMAL), 2000); 
+setTimeout(() => addOrder(OrderType.NORMAL), 2000);
 
 addBot(); // Bot #1
 addBot(); // Bot #2
