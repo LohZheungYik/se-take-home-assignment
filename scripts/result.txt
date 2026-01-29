@@ -1,4 +1,8 @@
-McDonald's Order Management System - Simulation Started
+McDonald's Order Management System - Simulation Results
 
-[23:09:49] Bot #1 created - Status: ACTIVE
-[23:09:49] Bot #2 created - Status: ACTIVE
+[23:15:50] Bot #1 created - Status: ACTIVE
+[23:15:50] Bot #2 created - Status: ACTIVE
+[23:15:50] Created Normal Order #1001 - Status: PENDING
+[23:15:50] Created VIP Order #1002 - Status: PENDING
+[23:15:52] Created Normal Order #1003 - Status: PENDING
+[23:15:55] Created VIP Order #1004 - Status: PENDING
