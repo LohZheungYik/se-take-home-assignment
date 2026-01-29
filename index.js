@@ -91,6 +91,29 @@ function processOrders() {
     });
 }
 
+// ===== REMOVE BOT FUNCTION =====
+function removeBot() {
+    if (bots.length === 0) return; // no bots to remove
+
+    const bot = bots.pop(); // remove newest bot
+
+    if (bot.currentOrder) {
+        // stop the processing
+        clearTimeout(bot.timeout);
+
+        // return order to pendingOrders at the front (to be picked quickly)
+        pendingOrders.unshift(bot.currentOrder);
+        bot.currentOrder.status = 'PENDING';
+        bot.currentOrder.bot = null;
+
+        log(`Bot #${bot.id} destroyed while processing - Order #${bot.currentOrder.id} back to PENDING`);
+    } else {
+        log(`Bot #${bot.id} destroyed while IDLE`);
+    }
+
+    processOrders(); // let other bots pick up returned order
+}
+
 // ===== SIMULATION =====
 log("McDonald's Order Management System - Simulation Results", false);
 log("", false);
@@ -105,3 +128,6 @@ addBot(); // Bot #2
 
 // Order #1003
 setTimeout(() => addOrder(OrderType.VIP), 5000);    // Order #1004
+
+// Remove newest bot after 15 seconds
+setTimeout(() => removeBot(), 15000);
