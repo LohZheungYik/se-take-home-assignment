@@ -114,10 +114,29 @@ function removeBot() {
     processOrders(); // let other bots pick up returned order
 }
 
+// ===== FINAL STATUS FUNCTION =====
+function reportFinalStatus() {
+    const totalOrders = allOrders.length;
+    const vipOrders = allOrders.filter(o => o.type === OrderType.VIP).length;
+    const normalOrders = allOrders.filter(o => o.type === OrderType.NORMAL).length;
+    const completed = completedOrders.length;
+    const activeBots = bots.length;
+    const pending = pendingOrders.length;
+
+    log("", false);
+    log("Final Status:", false);
+    log(`- Total Orders Processed: ${totalOrders} (${vipOrders} VIP, ${normalOrders} Normal)`, false);
+    log(`- Orders Completed: ${completed}`, false);
+    log(`- Active Bots: ${activeBots}`, false);
+    log(`- Pending Orders: ${pending}`, false);
+}
+
+
 // ===== SIMULATION =====
 log("McDonald's Order Management System - Simulation Results", false);
 log("", false);
 
+setTimeout(() => reportFinalStatus(), 55000);
 // Example simulation actions
 addOrder(OrderType.NORMAL); // Order #1001
 addOrder(OrderType.VIP);    // Order #1002
@@ -131,3 +150,4 @@ setTimeout(() => addOrder(OrderType.VIP), 5000);    // Order #1004
 
 // Remove newest bot after 15 seconds
 setTimeout(() => removeBot(), 15000);
+
