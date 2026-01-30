@@ -153,13 +153,14 @@ log("", false);
 // Example simulation actions
 addOrder(OrderType.NORMAL); // Order #1001
 addOrder(OrderType.VIP);    // Order #1002
-setTimeout(() => addOrder(OrderType.NORMAL), 2000);
+addOrder(OrderType.VIP);    // Order #1003 //EXPECTED Q: #1002, #1003, #1001
+
+setTimeout(() => addOrder(OrderType.NORMAL), 2000); // Order #1004
 
 addBot(); // Bot #1
 addBot(); // Bot #2
 
-// Order #1003
-setTimeout(() => addOrder(OrderType.VIP), 5000);    // Order #1004
+setTimeout(() => addOrder(OrderType.VIP), 5000);    // Order #1005
 
 // Remove newest bot after 15 seconds
 setTimeout(() => removeBot(), 15000);
