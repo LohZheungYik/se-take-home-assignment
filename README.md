@@ -55,7 +55,7 @@ Or run directly using
 1.	Orders in queue:
 	-	Normal: #1001
 	-	VIP: #1002
-2.	Adding a new VIP order (#1003) will queue behind existing VIPs but before Normal orders.
+2.	Adding a new VIP order (#1003) will queue behind existing VIP orders but before Normal orders.
 3.	Bots process orders in order:
 	-	VIP orders first
 	-	Normal orders after VIPs
