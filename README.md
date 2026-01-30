@@ -18,6 +18,7 @@ It demonstrates order management for normal and VIP customers and bot control fo
 
 ## Project Structure
 
+```
 se-take-home-assignment/
 ├── index.js           # Main simulation CLI
 ├── package.json
@@ -27,6 +28,7 @@ se-take-home-assignment/
 │   ├── run.sh         # Run script
 │   └── result.txt     # CLI output
 └── README.md
+```
 
 ## Getting Started
 
@@ -37,17 +39,17 @@ se-take-home-assignment/
 
 ### Run the Simulation
 
-**Run the CLI simulation**
-./scripts/run.sh
+Run the CLI simulation using
+```./scripts/run.sh```
 
-**Or directly**
-node index.js
+Or run directly using
+```node index.js```
 
 ### Check results
-cat scripts/result.txt
+```cat scripts/result.txt```
 
 ### Test
-./scripts/test.sh
+```./scripts/test.sh```
 
 ### Example Simulation Flow
 1.	Orders in queue:
