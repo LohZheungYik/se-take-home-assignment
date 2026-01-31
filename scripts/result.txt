@@ -1,25 +1,25 @@
 McDonald's Order Management System - Simulation Results
 
-[14:58:14] Created Normal Order #1001 - Status: PENDING
-[14:58:14] Created VIP Order #1002 - Status: PENDING
-[14:58:14] Created VIP Order #1003 - Status: PENDING
-[14:58:14] Bot #1 created - Status: ACTIVE
-[14:58:14] Bot #1 picked up VIP Order #1002 - Status: PROCESSING
-[14:58:14] Bot #2 created - Status: ACTIVE
-[14:58:14] Bot #2 picked up VIP Order #1003 - Status: PROCESSING
-[14:58:16] Created Normal Order #1004 - Status: PENDING
-[14:58:19] Created VIP Order #1005 - Status: PENDING
-[14:58:24] Bot #1 completed VIP Order #1002 - Status: COMPLETE (Processing time: 10s)
-[14:58:24] Bot #1 picked up VIP Order #1005 - Status: PROCESSING
-[14:58:24] Bot #2 completed VIP Order #1003 - Status: COMPLETE (Processing time: 10s)
-[14:58:24] Bot #2 picked up Normal Order #1001 - Status: PROCESSING
-[14:58:29] Bot #2 destroyed while processing - Order #1001 back to PENDING
-[14:58:34] Bot #1 completed VIP Order #1005 - Status: COMPLETE (Processing time: 10s)
-[14:58:34] Bot #1 picked up Normal Order #1001 - Status: PROCESSING
-[14:58:44] Bot #1 completed Normal Order #1001 - Status: COMPLETE (Processing time: 10s)
-[14:58:44] Bot #1 picked up Normal Order #1004 - Status: PROCESSING
-[14:58:54] Bot #1 completed Normal Order #1004 - Status: COMPLETE (Processing time: 10s)
-[14:58:54] Bot #1 is now IDLE - No pending orders
+[23:09:45] Created Normal Order #1001 - Status: PENDING
+[23:09:45] Created VIP Order #1002 - Status: PENDING
+[23:09:45] Created VIP Order #1003 - Status: PENDING
+[23:09:45] Bot #1 created - Status: ACTIVE
+[23:09:45] Bot #1 picked up VIP Order #1002 - Status: PROCESSING
+[23:09:45] Bot #2 created - Status: ACTIVE
+[23:09:45] Bot #2 picked up VIP Order #1003 - Status: PROCESSING
+[23:09:47] Created Normal Order #1004 - Status: PENDING
+[23:09:50] Created VIP Order #1005 - Status: PENDING
+[23:09:55] Bot #1 completed VIP Order #1002 - Status: COMPLETE (Processing time: 10s)
+[23:09:55] Bot #1 picked up VIP Order #1005 - Status: PROCESSING
+[23:09:55] Bot #2 completed VIP Order #1003 - Status: COMPLETE (Processing time: 10s)
+[23:09:55] Bot #2 picked up Normal Order #1001 - Status: PROCESSING
+[23:10:00] Bot #2 destroyed while processing - Order #1001 back to PENDING
+[23:10:05] Bot #1 completed VIP Order #1005 - Status: COMPLETE (Processing time: 10s)
+[23:10:05] Bot #1 picked up Normal Order #1001 - Status: PROCESSING
+[23:10:15] Bot #1 completed Normal Order #1001 - Status: COMPLETE (Processing time: 10s)
+[23:10:15] Bot #1 picked up Normal Order #1004 - Status: PROCESSING
+[23:10:25] Bot #1 completed Normal Order #1004 - Status: COMPLETE (Processing time: 10s)
+[23:10:25] Bot #1 is now IDLE - No pending orders
 
 Final Status:
 - Total Orders Processed: 5 (3 VIP, 2 Normal)
