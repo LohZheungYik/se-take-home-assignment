@@ -1,2 +1,0 @@
-[00:24:33] Bot #1 created - Status: ACTIVE
-[00:24:33] Bot #1 is now IDLE - No pending orders
