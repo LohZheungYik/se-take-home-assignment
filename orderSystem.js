@@ -3,12 +3,12 @@ export const OrderType = { NORMAL: 'Normal', VIP: 'VIP' };
 import fs from 'fs';
 import path from 'path';
 
-let bots = [];
+export let bots = [];
 
-let orderCounter = 1000;
-let pendingOrders = [];
-let allOrders = [];
-let completedOrders = [];
+export let orderCounter = 1000;
+export let pendingOrders = [];
+export let allOrders = [];
+export let completedOrders = [];
 
 const RESULT_FILE = path.join('scripts', 'result.txt');
 
