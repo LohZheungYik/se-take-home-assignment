@@ -1,4 +1,4 @@
-// /tests/addOrder.test.js
+//unit tests of addOrder()
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
