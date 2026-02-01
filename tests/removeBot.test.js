@@ -1,4 +1,4 @@
-//unit tests removeBot()
+//unit tests of removeBot()
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
@@ -86,7 +86,6 @@ async function runAllTests() {
     assert.ok(true);
   });
 
-  console.log('[INFO] All removeBot() tests finished.');
 }
 
 // Start the tests

@@ -96,7 +96,6 @@ async function runAllTests() {
     assert.ok(logs.includes('is now IDLE'));
   });
 
-  console.log('[INFO] All tests finished.');
 }
 
 // Start the tests

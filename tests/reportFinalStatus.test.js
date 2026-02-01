@@ -86,6 +86,4 @@ async function runAllTests() {
   });
 }
 
-runAllTests().then(() => {
-  console.log('\n[INFO] All reportFinalStatus() tests finished.');
-});
+runAllTests();
