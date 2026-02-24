@@ -2,22 +2,21 @@
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
-import { addOrder, OrderType, pendingOrders, allOrders, completedOrders } from '../orderSystem.js';
+import { OrderSystem, OrderType } from '../orderSystem.js';
 
 const RESULT_FILE = path.join('scripts', 'result.txt');
 
-// Reset queues and log file
-function resetSystem() {
-  fs.writeFileSync(RESULT_FILE, '', { encoding: 'utf8' });
-  pendingOrders.length = 0;
-  allOrders.length = 0;
-  completedOrders.length = 0;
-}
+// // Reset queues and log file
+// function resetSystem() {
+//   fs.writeFileSync(RESULT_FILE, '', { encoding: 'utf8' });
+//   pendingOrders.length = 0;
+//   allOrders.length = 0;
+//   completedOrders.length = 0;
+// }
 
 // Helper to run a test
 function runTest(name, fn) {
   try {
-    resetSystem();
     fn();
     console.log(`[PASS] ${name}`);
   } catch (err) {
@@ -28,16 +27,17 @@ function runTest(name, fn) {
 
 // ===== Tests =====
 runTest('Normal order is added to the queue', () => {
-  addOrder(OrderType.NORMAL);
+  var orderSystem = new OrderSystem();
+  orderSystem.addOrder(OrderType.NORMAL);
 
   // Check pendingOrders queue
-  assert.strictEqual(pendingOrders.length, 1);
-  assert.strictEqual(pendingOrders[0].type, 'Normal');
-  assert.strictEqual(pendingOrders[0].status, 'PENDING');
+  assert.strictEqual(orderSystem.pendingOrders.length, 1);
+  assert.strictEqual(orderSystem.pendingOrders[0].type, 'Normal');
+  assert.strictEqual(orderSystem.pendingOrders[0].status, 'PENDING');
 
   // Check allOrders
-  assert.strictEqual(allOrders.length, 1);
-  assert.strictEqual(allOrders[0].type, 'Normal');
+  assert.strictEqual(orderSystem.totalOrders, 1);
+  // assert.strictEqual(allOrders[0].type, 'Normal');
 
   // Check log
   const logs = fs.readFileSync(RESULT_FILE, 'utf8');
@@ -45,12 +45,13 @@ runTest('Normal order is added to the queue', () => {
 });
 
 runTest('VIP orders are placed before normal orders', () => {
-  addOrder(OrderType.NORMAL); 
-  addOrder(OrderType.VIP);    
-  addOrder(OrderType.NORMAL); 
-  addOrder(OrderType.VIP);
+  var orderSystem = new OrderSystem();
+  orderSystem.addOrder(OrderType.NORMAL); 
+  orderSystem.addOrder(OrderType.VIP);    
+  orderSystem.addOrder(OrderType.NORMAL); 
+  orderSystem.addOrder(OrderType.VIP);
 
-  const types = pendingOrders.map(o => o.type);
+  const types = orderSystem.pendingOrders.map(o => o.type);
   
   assert.deepStrictEqual(types, ['VIP', 'VIP', 'Normal', 'Normal']);
 });

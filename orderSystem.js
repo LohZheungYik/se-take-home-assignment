@@ -1,143 +1,175 @@
-// ===== ORDERS =====
-export const OrderType = { NORMAL: 'Normal', VIP: 'VIP' };
 import fs from 'fs';
 import path from 'path';
 
-export let bots = [];
-
-export let orderCounter = 1000;
-export let pendingOrders = [];
-export let allOrders = [];
-export let completedOrders = [];
-
 const RESULT_FILE = path.join('scripts', 'result.txt');
+const PROCESSING_DURATION = 10000;
 
-export function log(msg, needTimeStamp = true) {
-    const timestamp = new Date().toLocaleTimeString('en-GB'); // HH:MM:SS
-    const line = needTimeStamp ? `[${timestamp}] ${msg}` : msg;
-    // Only write to result.txt
-    fs.appendFileSync(RESULT_FILE, line + '\n', { encoding: 'utf8' });
-}
+export const OrderType = { NORMAL: 'Normal', VIP: 'VIP' };
+// const OrderPriority = {
+//     VIP: 1,
+//     Normal: 2
+// }
 
-// ===== ADD ORDER FUNCTION =====
-export function addOrder(type) {
-    orderCounter++;
-    const order = { id: orderCounter, type, status: 'PENDING' };
-    allOrders.push(order);
+export class OrderSystem {
+    constructor() {
 
-    // VIP orders go in front of normal orders but behind other VIPs
-    if (type === OrderType.VIP) {
-        const firstNormalIndex = pendingOrders.findIndex(o => o.type !== OrderType.VIP);
-        if (firstNormalIndex === -1) {
-            pendingOrders.push(order);
+        // Clear previous result file content
+        fs.writeFileSync(RESULT_FILE, '', { flag: 'w' });
+        
+        this.log("McDonald's Order Management System - Simulation Results", false);
+        this.log("", false);
+
+
+        this.bots = [];
+
+        this.pendingOrders = [];
+        this.completedOrders = [];
+
+        this.orderCounter = 1000;
+
+        this.totalOrders = 0;
+        this.vipOrders = 0;
+        this.normalOrders = 0;
+
+        this.finalStatusReported = false;
+
+    }
+
+    log(msg, needTimeStamp = true) {
+        const timestamp = new Date().toLocaleTimeString('en-GB'); // HH:MM:SS
+        const line = needTimeStamp ? `[${timestamp}] ${msg}` : msg;
+        fs.appendFileSync(RESULT_FILE, line + '\n', { encoding: 'utf8' });
+    }
+
+    addOrder(type) {
+        this.orderCounter++;
+
+        const order = {
+            id: this.orderCounter,
+            type: type,
+            status: 'PENDING',
+            botId: null
+        };
+
+        this.totalOrders++;
+
+        if (type === OrderType.VIP) {
+            this.vipOrders++;
         } else {
-            pendingOrders.splice(firstNormalIndex, 0, order);
+            this.normalOrders++;
         }
-    } else {
-        pendingOrders.push(order);
-    }
 
-    log(`Created ${type} Order #${order.id} - Status: PENDING`);
-    processOrders(); // try to assign immediately
-}
-
-// ===== ADD BOT FUNCTION =====
-export function addBot() {
-    const bot = { id: bots.length + 1, currentOrder: null, isIdleLogged: false };
-    bots.push(bot);
-    log(`Bot #${bot.id} created - Status: ACTIVE`);
-    processOrders(); // immediately try to pick up orders
-}
-
-// ===== PROCESS ORDERS FUNCTION =====
-export function processOrders() {
-    bots.forEach(bot => {
-        if (!bot.currentOrder) {
-            if (pendingOrders.length > 0) {
-                // assign next order
-                const order = pendingOrders.shift();
-                bot.currentOrder = order;
-                order.status = 'PROCESSING';
-                order.bot = bot.id;
-
-                // reset idle log
-                bot.isIdleLogged = false;
-
-                log(`Bot #${bot.id} picked up ${order.type} Order #${order.id} - Status: PROCESSING`);
-
-                bot.timeout = setTimeout(() => {
-                    order.status = 'COMPLETE';
-                    order.completed = true;
-                    completedOrders.push(order);
-                    bot.currentOrder = null;
-                    order.bot = null;
-
-                    log(`Bot #${bot.id} completed ${order.type} Order #${order.id} - Status: COMPLETE (Processing time: 10s)`);
-
-                    processOrders(); // pick next order if any
-                    checkFinalStatus();
-                }, 10000);
+        // VIP orders go in front of normal orders but behind other VIPs
+        if (type === OrderType.VIP) {
+            const firstNormalIndex = this.pendingOrders.findIndex(o => o.type !== OrderType.VIP);
+            if (firstNormalIndex === -1) {
+                this.pendingOrders.push(order);
             } else {
-                // no pending orders → log idle once
-                if (!bot.isIdleLogged) {
-                    log(`Bot #${bot.id} is now IDLE - No pending orders`);
-                    bot.isIdleLogged = true;
-                    checkFinalStatus();
-                }
+                this.pendingOrders.splice(firstNormalIndex, 0, order);
             }
+        } else {
+            this.pendingOrders.push(order);
         }
-    });
-}
 
-// ===== REMOVE BOT FUNCTION =====
-export function removeBot() {
-    if (bots.length === 0) return; // no bots to remove
-
-    const bot = bots.pop(); // remove newest bot
-
-    if (bot.currentOrder) {
-        // stop the processing
-        clearTimeout(bot.timeout);
-
-        // return order to pendingOrders at the front (to be picked quickly)
-        pendingOrders.unshift(bot.currentOrder);
-        bot.currentOrder.status = 'PENDING';
-        bot.currentOrder.bot = null;
-
-        log(`Bot #${bot.id} destroyed while processing - Order #${bot.currentOrder.id} back to PENDING`);
-    } else {
-        log(`Bot #${bot.id} destroyed while IDLE`);
+        this.log(`Created ${type} Order #${order.id} - Status: PENDING`);
+        this.processOrders(); // try to assign immediately
     }
 
-    processOrders(); // let other bots pick up returned order
-}
+    addBot() {
+        const bot = {
+            id: this.bots.length + 1,
+            currentOrder: null,
+            isIdleLogged: false
+        };
+        this.bots.push(bot);
+        this.log(`Bot #${bot.id} created - Status: ACTIVE`);
+        this.processOrders(); // immediately try to pick up orders
+    }
 
-// ===== FINAL STATUS FUNCTION =====
-export function reportFinalStatus() {
-    const totalOrders = allOrders.length;
-    const vipOrders = allOrders.filter(o => o.type === OrderType.VIP).length;
-    const normalOrders = allOrders.filter(o => o.type === OrderType.NORMAL).length;
-    const completed = completedOrders.length;
-    const activeBots = bots.length;
-    const pending = pendingOrders.length;
+    removeBot() {
+        if (this.bots.length === 0) return; // no bots to remove
 
-    log("", false);
-    log("Final Status:", false);
-    log(`- Total Orders Processed: ${totalOrders} (${vipOrders} VIP, ${normalOrders} Normal)`, false);
-    log(`- Orders Completed: ${completed}`, false);
-    log(`- Active Bots: ${activeBots}`, false);
-    log(`- Pending Orders: ${pending}`, false);
-}
+        const bot = this.bots.pop(); // remove newest bot
 
-// ===== CHECK IF FINAL STATUS SHOULD BE REPORTED =====
-let finalStatusReported = false;
+        if (bot.currentOrder) {
+            // stop the processing
+            clearTimeout(bot.timeout);
 
-function checkFinalStatus() {
-    const allOrdersDone = allOrders.length === completedOrders.length;
-    const allBotsIdle = bots.every(bot => !bot.currentOrder);
+            bot.currentOrder.status = 'PENDING';
+            bot.currentOrder.botId = null;
 
-    if (!finalStatusReported && allOrdersDone && allBotsIdle) {
-        finalStatusReported = true; // mark it reported
-        reportFinalStatus();
+            // return order to pendingOrders at the front (to be picked quickly)
+            this.pendingOrders.unshift(bot.currentOrder);
+
+
+            this.log(`Bot #${bot.id} destroyed while processing - Order #${bot.currentOrder.id} back to PENDING`);
+        } else {
+            this.log(`Bot #${bot.id} destroyed while IDLE`);
+        }
+
+        this.processOrders(); // let other bots pick up returned order
+    }
+
+    processOrders() {
+
+        //loop through bots
+        this.bots.forEach(bot => {
+
+            // bot busy
+            if (bot.currentOrder) return;
+
+            // no pending orders, log bot IDLE
+            if (this.pendingOrders.length === 0) {
+                if (!bot.isIdleLogged) {
+                    this.log(`Bot #${bot.id} is now IDLE - No pending orders`);
+                    bot.isIdleLogged = true;
+                    this.checkFinalStatus();
+                }
+
+                return;
+            }
+
+            const order = this.pendingOrders.shift();
+            bot.currentOrder = order;
+
+            //reset IDLE log status
+            bot.isIdleLogged = false;
+
+            order.status = 'PROCESSING';
+            order.botId = bot.id;
+            this.log(`Bot #${bot.id} picked up ${order.type} Order #${order.id} - Status: PROCESSING`);
+
+            bot.timeout = setTimeout(() => {
+                order.status = 'COMPLETE';
+                order.botId = null;
+                bot.currentOrder = null;
+                this.completedOrders.push(order);
+
+                this.log(`Bot #${bot.id} completed ${order.type} Order #${order.id} - Status: COMPLETE`);
+
+                this.processOrders();
+                this.checkFinalStatus();
+
+            }, PROCESSING_DURATION);
+        });
+    }
+
+    checkFinalStatus() {
+        const allOrdersDone = this.totalOrders === this.completedOrders.length;
+        const allBotsIdle = this.bots.every(bot => !bot.currentOrder);
+
+        if (!this.finalStatusReported && allOrdersDone && allBotsIdle) {
+            this.finalStatusReported = true; // mark it reported
+            this.reportFinalStatus();
+        }
+    }
+
+    reportFinalStatus() {
+        this.log("", false);
+        this.log("Final Status:", false);
+        this.log(`- Total Orders Processed: ${this.totalOrders} (${this.vipOrders} VIP, ${this.normalOrders} Normal)`, false);
+        this.log(`- Orders Completed: ${this.completedOrders.length}`, false);
+        this.log(`- Active Bots: ${this.bots.length}`, false);
+        this.log(`- Pending Orders: ${this.pendingOrders.length}`, false);
     }
 }

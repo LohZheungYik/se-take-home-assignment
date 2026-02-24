@@ -3,24 +3,22 @@
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
-import { addBot, bots, pendingOrders, allOrders, completedOrders, OrderType, addOrder } from '../orderSystem.js';
-import { processOrders } from '../orderSystem.js';
+import { OrderSystem, OrderType } from '../orderSystem.js';
 
 const RESULT_FILE = path.join('scripts', 'result.txt');
 
 // Reset system before each test
-function resetSystem() {
-  fs.writeFileSync(RESULT_FILE, '', { encoding: 'utf8' });
-  pendingOrders.length = 0;
-  allOrders.length = 0;
-  completedOrders.length = 0;
-  bots.length = 0;
-}
+// function resetSystem() {
+//   fs.writeFileSync(RESULT_FILE, '', { encoding: 'utf8' });
+//   pendingOrders.length = 0;
+//   allOrders.length = 0;
+//   completedOrders.length = 0;
+//   bots.length = 0;
+// }
 
 // Helper to run a test
 function runTest(name, fn) {
   try {
-    resetSystem();
     fn();
     console.log(`[PASS] ${name}`);
   } catch (err) {
@@ -31,12 +29,13 @@ function runTest(name, fn) {
 
 // ===== Tests =====
 runTest('Bot is added to the system', () => {
-  addBot();
+  var orderSystem = new OrderSystem();
+  orderSystem.addBot();
 
   // Check bots array
-  assert.strictEqual(bots.length, 1);
-  assert.strictEqual(bots[0].id, 1);
-  assert.strictEqual(bots[0].currentOrder, null);
+  assert.strictEqual(orderSystem.bots.length, 1);
+  assert.strictEqual(orderSystem.bots[0].id, 1);
+  assert.strictEqual(orderSystem.bots[0].currentOrder, null);
   
   // Check log
   const logs = fs.readFileSync(RESULT_FILE, 'utf8');
@@ -44,18 +43,20 @@ runTest('Bot is added to the system', () => {
 });
 
 runTest('Bot picks up a pending order immediately', () => {
+
+  var orderSystem = new OrderSystem();
   // Add a pending order first
-  addOrder(OrderType.NORMAL); // #1001
+  orderSystem.addOrder(OrderType.NORMAL); // #1001
 
   // Add bot
-  addBot(); // #1
+  orderSystem.addBot(); // #1
 
   // Bot should immediately pick up the order
-  assert.strictEqual(bots[0].currentOrder.id, allOrders[0].id);
-  assert.strictEqual(bots[0].currentOrder.status, 'PROCESSING');
+  assert.strictEqual(orderSystem.bots[0].currentOrder.id, 1001);
+  assert.strictEqual(orderSystem.bots[0].currentOrder.status, 'PROCESSING');
 
   // pendingOrders should now be empty
-  assert.strictEqual(pendingOrders.length, 0);
+  assert.strictEqual(orderSystem.pendingOrders.length, 0);
 
   // Check log mentions picking up the order
   const logs = fs.readFileSync(RESULT_FILE, 'utf8');
