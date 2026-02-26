@@ -7,14 +7,6 @@ import { OrderSystem, OrderType } from '../orderSystem.js';
 
 const RESULT_FILE = path.join('scripts', 'result.txt');
 
-// ===== Reset system =====
-// function resetSystem() {
-//   fs.writeFileSync(RESULT_FILE, '', { encoding: 'utf8' });
-//   pendingOrders.length = 0;
-//   allOrders.length = 0;
-//   completedOrders.length = 0;
-//   bots.length = 0;
-// }
 
 var orderSystem = new OrderSystem();
 

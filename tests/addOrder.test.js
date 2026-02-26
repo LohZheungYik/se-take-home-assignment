@@ -6,14 +6,6 @@ import { OrderSystem, OrderType } from '../orderSystem.js';
 
 const RESULT_FILE = path.join('scripts', 'result.txt');
 
-// // Reset queues and log file
-// function resetSystem() {
-//   fs.writeFileSync(RESULT_FILE, '', { encoding: 'utf8' });
-//   pendingOrders.length = 0;
-//   allOrders.length = 0;
-//   completedOrders.length = 0;
-// }
-
 // Helper to run a test
 function runTest(name, fn) {
   try {

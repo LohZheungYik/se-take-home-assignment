@@ -4,11 +4,7 @@ import path from 'path';
 const RESULT_FILE = path.join('scripts', 'result.txt');
 const PROCESSING_DURATION = 10000;
 
-export const OrderType = { NORMAL: 'Normal', VIP: 'VIP' };
-// const OrderPriority = {
-//     VIP: 1,
-//     Normal: 2
-// }
+export const OrderType = { NORMAL: 'NORMAL', VIP: 'VIP' };
 
 export class OrderSystem {
     constructor() {
@@ -48,7 +44,8 @@ export class OrderSystem {
             id: this.orderCounter,
             type: type,
             status: 'PENDING',
-            botId: null
+            botId: null,
+            timeout: null
         };
 
         this.totalOrders++;
@@ -111,13 +108,10 @@ export class OrderSystem {
     }
 
     processOrders() {
-
         //loop through bots
         this.bots.forEach(bot => {
-
             // bot busy
             if (bot.currentOrder) return;
-
             // no pending orders, log bot IDLE
             if (this.pendingOrders.length === 0) {
                 if (!bot.isIdleLogged) {
@@ -125,16 +119,13 @@ export class OrderSystem {
                     bot.isIdleLogged = true;
                     this.checkFinalStatus();
                 }
-
                 return;
             }
 
             const order = this.pendingOrders.shift();
             bot.currentOrder = order;
-
             //reset IDLE log status
             bot.isIdleLogged = false;
-
             order.status = 'PROCESSING';
             order.botId = bot.id;
             this.log(`Bot #${bot.id} picked up ${order.type} Order #${order.id} - Status: PROCESSING`);
@@ -144,7 +135,6 @@ export class OrderSystem {
                 order.botId = null;
                 bot.currentOrder = null;
                 this.completedOrders.push(order);
-
                 this.log(`Bot #${bot.id} completed ${order.type} Order #${order.id} - Status: COMPLETE`);
 
                 this.processOrders();

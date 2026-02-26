@@ -7,15 +7,6 @@ import { OrderSystem, OrderType } from '../orderSystem.js';
 
 const RESULT_FILE = path.join('scripts', 'result.txt');
 
-// Reset system before each test
-// function resetSystem() {
-//   fs.writeFileSync(RESULT_FILE, '', { encoding: 'utf8' });
-//   pendingOrders.length = 0;
-//   allOrders.length = 0;
-//   completedOrders.length = 0;
-//   bots.length = 0;
-// }
-
 // Helper to run a test
 function runTest(name, fn) {
   try {
