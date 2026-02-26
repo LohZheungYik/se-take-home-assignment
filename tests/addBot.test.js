@@ -51,5 +51,5 @@ runTest('Bot picks up a pending order immediately', () => {
 
   // Check log mentions picking up the order
   const logs = fs.readFileSync(RESULT_FILE, 'utf8');
-  assert.ok(logs.includes('picked up Normal Order'), 'Log should mention the bot picked up the order');
+  assert.ok(logs.includes('picked up NORMAL Order'), 'Log should mention the bot picked up the order');
 });

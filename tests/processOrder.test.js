@@ -40,8 +40,8 @@ async function runAllTests() {
     assert.strictEqual(orderSystem.completedOrders[0].status, 'COMPLETE');
 
     const logs = fs.readFileSync(RESULT_FILE, 'utf8');
-    assert.ok(logs.includes('picked up Normal Order'));
-    assert.ok(logs.includes('completed Normal Order'));
+    assert.ok(logs.includes('picked up NORMAL Order'));
+    assert.ok(logs.includes('completed NORMAL Order'));
   });
 
   await runTest('Multiple bots process multiple orders', async () => {
@@ -64,7 +64,7 @@ async function runAllTests() {
     });
 
     const logs = fs.readFileSync(RESULT_FILE, 'utf8');
-    assert.ok(logs.includes('completed Normal Order'));
+    assert.ok(logs.includes('completed NORMAL Order'));
     assert.ok(logs.includes('completed VIP Order'));
   });
 

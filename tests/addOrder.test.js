@@ -24,7 +24,7 @@ runTest('Normal order is added to the queue', () => {
 
   // Check pendingOrders queue
   assert.strictEqual(orderSystem.pendingOrders.length, 1);
-  assert.strictEqual(orderSystem.pendingOrders[0].type, 'Normal');
+  assert.strictEqual(orderSystem.pendingOrders[0].type, 'NORMAL');
   assert.strictEqual(orderSystem.pendingOrders[0].status, 'PENDING');
 
   // Check allOrders
@@ -33,7 +33,7 @@ runTest('Normal order is added to the queue', () => {
 
   // Check log
   const logs = fs.readFileSync(RESULT_FILE, 'utf8');
-  assert.ok(logs.includes('Normal Order'), 'Log should mention Normal Order');
+  assert.ok(logs.includes('NORMAL Order'), 'Log should mention Normal Order');
 });
 
 runTest('VIP orders are placed before normal orders', () => {
@@ -45,5 +45,5 @@ runTest('VIP orders are placed before normal orders', () => {
 
   const types = orderSystem.pendingOrders.map(o => o.type);
   
-  assert.deepStrictEqual(types, ['VIP', 'VIP', 'Normal', 'Normal']);
+  assert.deepStrictEqual(types, ['VIP', 'VIP', 'NORMAL', 'NORMAL']);
 });
